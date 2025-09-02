@@ -1,13 +1,13 @@
 import React, { useEffect, useRef } from 'react';
-import { Toolbar, ViewMode } from './components/Toolbar';
-import { Editor } from './components/Editor';
-import { Preview } from './components/Preview';
+import { MarkTextToolbar } from './components/MarkTextToolbar';
+import { WysiwygEditor, EditMode } from './components/WysiwygEditor';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { configureMarked, getDefaultContent } from './utils/markdown';
+import { getWordCount } from './utils/wordCount';
 
 function App() {
   const [content, setContent] = useLocalStorage('marktext-content', getDefaultContent());
-  const [viewMode, setViewMode] = useLocalStorage<ViewMode>('marktext-viewmode', 'split');
+  const [editMode, setEditMode] = useLocalStorage<EditMode>('marktext-editmode', 'wysiwyg');
   const [isDarkTheme, setIsDarkTheme] = useLocalStorage('marktext-darktheme', false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -18,6 +18,8 @@ function App() {
   useEffect(() => {
     document.body.className = isDarkTheme ? 'dark-theme' : '';
   }, [isDarkTheme]);
+
+  const wordCount = getWordCount(content);
 
   const handleExport = () => {
     const blob = new Blob([content], { type: 'text/markdown' });
@@ -49,16 +51,8 @@ function App() {
     reader.readAsText(file);
   };
 
-  const getContainerClass = () => {
-    let className = 'editor-container';
-    if (viewMode === 'split') className += ' split-view';
-    else if (viewMode === 'preview') className += ' preview-only';
-    else if (viewMode === 'editor') className += ' editor-only';
-    return className;
-  };
-
   return (
-    <div className={getContainerClass()}>
+    <div className="marktext-app">
       <input
         ref={fileInputRef}
         type="file"
@@ -67,31 +61,22 @@ function App() {
         onChange={handleFileSelect}
       />
       
-      <Toolbar
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
+      <MarkTextToolbar
+        editMode={editMode}
+        onEditModeChange={setEditMode}
         isDarkTheme={isDarkTheme}
         onThemeToggle={() => setIsDarkTheme(!isDarkTheme)}
         onExport={handleExport}
         onImport={handleImport}
+        wordCount={wordCount}
       />
 
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        {(viewMode === 'split' || viewMode === 'editor') && (
-          <Editor
-            content={content}
-            onChange={setContent}
-            className={viewMode === 'editor' ? 'editor-only' : ''}
-          />
-        )}
-        
-        {(viewMode === 'split' || viewMode === 'preview') && (
-          <Preview
-            content={content}
-            className={viewMode === 'preview' ? 'preview-only' : ''}
-          />
-        )}
-      </div>
+      <WysiwygEditor
+        content={content}
+        onChange={setContent}
+        editMode={editMode}
+        isDarkTheme={isDarkTheme}
+      />
     </div>
   );
 }
