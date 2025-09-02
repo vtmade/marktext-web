@@ -51,6 +51,12 @@ function App() {
     reader.readAsText(file);
   };
 
+  const handleClear = () => {
+    if (confirm('Are you sure you want to clear all content?')) {
+      setContent('');
+    }
+  };
+
   return (
     <div className="marktext-app">
       <input
@@ -68,6 +74,7 @@ function App() {
         onThemeToggle={() => setIsDarkTheme(!isDarkTheme)}
         onExport={handleExport}
         onImport={handleImport}
+        onClear={handleClear}
         wordCount={wordCount}
       />
 

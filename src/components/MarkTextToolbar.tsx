@@ -9,6 +9,7 @@ interface MarkTextToolbarProps {
   onThemeToggle: () => void;
   onExport: () => void;
   onImport: () => void;
+  onClear: () => void;
   wordCount: number;
 }
 
@@ -19,6 +20,7 @@ export const MarkTextToolbar: React.FC<MarkTextToolbarProps> = ({
   onThemeToggle,
   onExport,
   onImport,
+  onClear,
   wordCount
 }) => {
   return (
@@ -31,6 +33,9 @@ export const MarkTextToolbar: React.FC<MarkTextToolbarProps> = ({
           </button>
           <button className="toolbar-button" onClick={onExport} title="Export File">
             💾 Export
+          </button>
+          <button className="toolbar-button" onClick={onClear} title="Clear Editor">
+            🗑️ Clear
           </button>
         </div>
 
