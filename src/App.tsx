@@ -57,6 +57,38 @@ function App() {
     }
   };
 
+  const handleCopy = async () => {
+    try {
+      const { parseMarkdown } = await import('./utils/markdown');
+      const htmlContent = parseMarkdown(content);
+      
+      // Create a temporary div to hold the HTML
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = htmlContent;
+      
+      // Copy as both HTML and plain text for better compatibility
+      const clipboardItem = new ClipboardItem({
+        'text/html': new Blob([htmlContent], { type: 'text/html' }),
+        'text/plain': new Blob([tempDiv.textContent || content], { type: 'text/plain' })
+      });
+      
+      await navigator.clipboard.write([clipboardItem]);
+      
+      // Simple feedback
+      const button = document.querySelector('[title="Copy Formatted"]');
+      if (button) {
+        const originalText = button.textContent;
+        button.textContent = '✓ Copied';
+        setTimeout(() => {
+          button.textContent = originalText;
+        }, 1000);
+      }
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+      alert('Failed to copy to clipboard');
+    }
+  };
+
   return (
     <div className="marktext-app">
       <input
@@ -75,6 +107,7 @@ function App() {
         onExport={handleExport}
         onImport={handleImport}
         onClear={handleClear}
+        onCopy={handleCopy}
         wordCount={wordCount}
       />
 
@@ -83,6 +116,7 @@ function App() {
         onChange={setContent}
         editMode={editMode}
         isDarkTheme={isDarkTheme}
+        onModeChange={setEditMode}
       />
     </div>
   );
