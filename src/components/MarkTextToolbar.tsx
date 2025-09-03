@@ -62,20 +62,6 @@ export const MarkTextToolbar: React.FC<MarkTextToolbarProps> = ({
           >
             💻 Source
           </button>
-          <button
-            className={`toolbar-button ${editMode === 'typewriter' ? 'active' : ''}`}
-            onClick={() => onEditModeChange('typewriter')}
-            title="Typewriter Mode"
-          >
-            ⌨️ Typewriter
-          </button>
-          <button
-            className={`toolbar-button ${editMode === 'focus' ? 'active' : ''}`}
-            onClick={() => onEditModeChange('focus')}
-            title="Focus Mode"
-          >
-            🎯 Focus
-          </button>
         </div>
 
         {/* Theme Toggle */}
